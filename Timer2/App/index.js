@@ -5,7 +5,9 @@ import {
   View,
   StatusBar,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
+  Picker,
+  Platform
 } from "react-native";
 
 const screen = Dimensions.get("window");
@@ -39,12 +41,30 @@ const styles = StyleSheet.create({
   },
   timerText: {
     color: "#fff",
-    fontSize: 50
+    fontSize: 90
+  },
+  picker: {
+    width: 50,
+    ...Platform.select({
+      android: {
+        color: "#fff",
+        backgroundColor: "#07121B",
+        marginLeft: 10
+      }
+    })
+  },
+  pickerItem: {
+    color: "#fff",
+    fontSize: 20
+  },
+  pickerContainer: {
+    flexDirection: "row",
+    alignItems: "center"
   }
 });
 
 // 3 => 03, 10 => 10
-const formatNumber = number => "0${number}".slice(-2);
+const formatNumber = number => `0${number}`.slice(-2);
 
 const getRemaining = time => {
   const minutes = Math.floor(time / 60);
@@ -52,10 +72,25 @@ const getRemaining = time => {
   return { minutes: formatNumber(minutes), seconds: formatNumber(seconds) };
 };
 
+const createArray = length => {
+  const arr = [];
+  let i = 0;
+  while (i < length) {
+    arr.push(i.toString());
+    i += 1;
+  }
+  return arr;
+};
+
+const AVAILABLE_MINUTES = createArray(10);
+const AVAILABLE_SECONDS = createArray(60);
+
 export default class App extends React.Component {
   state = {
     remainingSeconds: 5,
-    isRunning: false
+    isRunning: false,
+    selectedMinutes: "0",
+    selectedSeconds: "5"
   };
 
   interval = null;
@@ -76,7 +111,9 @@ export default class App extends React.Component {
 
   start = () => {
     this.setState(state => ({
-      remainingSeconds: state.remainingSeconds - 1,
+      remainingSeconds:
+        parseInt(state.selectedMinutes, 10) * 60 + // string to num, min to sec
+        parseInt(state.selectedSeconds, 10), // add sec
       isRunning: true
     }));
 
@@ -97,13 +134,50 @@ export default class App extends React.Component {
     });
   };
 
+  renderPickers = () => (
+    <View style={styles.pickerContainer}>
+      <Picker
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+        selectedValue={this.state.selectedMinutes}
+        onValueChange={itemValue => {
+          this.setState({ selectedMinutes: itemValue }); // update state
+        }}
+        mode="dropdown"
+      >
+        {AVAILABLE_MINUTES.map(value => (
+          <Picker.Item key={value} label={value} value={value} />
+        ))}
+      </Picker>
+      <Text style={styles.pickerItem}>minutes</Text>
+      <Picker
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+        selectedValue={this.state.selectedSeconds}
+        onValueChange={itemValue => {
+          this.setState({ selectedSeconds: itemValue }); // update state
+        }}
+        mode="dropdown"
+      >
+        {AVAILABLE_SECONDS.map(value => (
+          <Picker.Item key={value} label={value} value={value} />
+        ))}
+      </Picker>
+      <Text style={styles.pickerItem}>seconds</Text>
+    </View>
+  );
+
   render() {
     const { minutes, seconds } = getRemaining(this.state.remainingSeconds);
 
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
-        <Text style={styles.timerText}>{"${minutes}:${seconds}"}</Text>
+        {this.state.isRunning ? (
+          <Text style={styles.timerText}>{`${minutes}:${seconds}`}</Text>
+        ) : (
+          this.renderPickers()
+        )}
         {this.state.isRunning ? (
           <TouchableOpacity
             onPress={this.stop}

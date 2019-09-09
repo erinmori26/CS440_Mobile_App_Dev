@@ -1,3 +1,4 @@
+// react native for mobile, react for web
 import React from "react";
 import {
   StyleSheet,
@@ -10,8 +11,9 @@ import {
   Platform
 } from "react-native";
 
-const screen = Dimensions.get("window");
+const screen = Dimensions.get("window"); // dimensions of window for positioning
 
+// all styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -45,6 +47,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     width: 50,
+    // for Android-specific style
     ...Platform.select({
       android: {
         color: "#fff",
@@ -63,15 +66,19 @@ const styles = StyleSheet.create({
   }
 });
 
-// 3 => 03, 10 => 10
-const formatNumber = number => `0${number}`.slice(-2);
+/////// CUSTOM METHODS ////////
 
+// 3 => 03, 10 => 10
+const formatNumber = number => `0${number}`.slice(-2); // single line = implicit return
+
+// get remaining time (basic math) and format minutes/seconds
 const getRemaining = time => {
   const minutes = Math.floor(time / 60);
   const seconds = time - minutes * 60;
-  return { minutes: formatNumber(minutes), seconds: formatNumber(seconds) };
+  return { minutes: formatNumber(minutes), seconds: formatNumber(seconds) }; // basically defining new JSON obj to return
 };
 
+// array of numbers for minutes/seconds to display in picker
 const createArray = length => {
   const arr = [];
   let i = 0;
@@ -85,7 +92,9 @@ const createArray = length => {
 const AVAILABLE_MINUTES = createArray(10);
 const AVAILABLE_SECONDS = createArray(60);
 
+/////// APP (like main) ////////
 export default class App extends React.Component {
+  // starting state of app
   state = {
     remainingSeconds: 5,
     isRunning: false,
@@ -95,45 +104,51 @@ export default class App extends React.Component {
 
   interval = null;
 
+  // React lifestyle method (override)
+  // timer cannot go below 0 seconds
+  // check previous state so no infinite loop (stop function updates state)
   componentDidUpdate(prevProp, prevState) {
-    // don't go below 0 seconds
     if (this.state.remainingSeconds === 0 && prevState.remainingSeconds !== 0) {
       this.stop();
     }
   }
 
+  // clear to avoid memory leaks
   componentWillUnmount() {
-    // clear to avoid memory leaks
     if (this.interval) {
       clearInterval(this.interval);
     }
   }
 
+  // start timer function
   start = () => {
     this.setState(state => ({
       remainingSeconds:
-        parseInt(state.selectedMinutes, 10) * 60 + // string to num, min to sec
-        parseInt(state.selectedSeconds, 10), // add sec
+        parseInt(state.selectedMinutes, 10) * 60 + // string --> number, minutes --> seconds
+        parseInt(state.selectedSeconds, 10), // add total seconds
       isRunning: true
     }));
 
+    // update state every second
     this.interval = setInterval(() => {
-      // check every second
+      // pass in method with no parameters that calls this.setState
       this.setState(state => ({
         remainingSeconds: state.remainingSeconds - 1
       }));
     }, 1000);
   };
 
+  // stop timer function
   stop = () => {
-    clearInterval(this.interval); // done with interval (clear mem)
+    clearInterval(this.interval); // finished with interval (clear memory)
     this.interval = null;
     this.setState({
-      remainingSeconds: 5, // temp
+      remainingSeconds: 5, // default
       isRunning: false
     });
   };
 
+  // create pickers to choose time to set
   renderPickers = () => (
     <View style={styles.pickerContainer}>
       <Picker
@@ -141,7 +156,7 @@ export default class App extends React.Component {
         itemStyle={styles.pickerItem}
         selectedValue={this.state.selectedMinutes}
         onValueChange={itemValue => {
-          this.setState({ selectedMinutes: itemValue }); // update state
+          this.setState({ selectedMinutes: itemValue }); // update state with minutes when changed
         }}
         mode="dropdown"
       >
@@ -155,7 +170,7 @@ export default class App extends React.Component {
         itemStyle={styles.pickerItem}
         selectedValue={this.state.selectedSeconds}
         onValueChange={itemValue => {
-          this.setState({ selectedSeconds: itemValue }); // update state
+          this.setState({ selectedSeconds: itemValue }); // update state with seconds when changed
         }}
         mode="dropdown"
       >
@@ -167,18 +182,22 @@ export default class App extends React.Component {
     </View>
   );
 
+  // React lifecycle method (override)
+  // render display of app
   render() {
     const { minutes, seconds } = getRemaining(this.state.remainingSeconds);
 
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
-        {this.state.isRunning ? (
+        {// if the timer is running, display time counting down; else display pickers
+        this.state.isRunning ? (
           <Text style={styles.timerText}>{`${minutes}:${seconds}`}</Text>
         ) : (
           this.renderPickers()
         )}
-        {this.state.isRunning ? (
+        {// if the timer is running, display the stop button; else display the start button
+        this.state.isRunning ? (
           <TouchableOpacity
             onPress={this.stop}
             style={[styles.button, styles.buttonStop]}

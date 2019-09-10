@@ -35,7 +35,7 @@ export const handleEqual = state => {
   if (operator === "/") {
     return {
       currentValue: previous / current,
-      ...resetState // objct spread
+      ...resetState // object spread, concatenation operator (add to JSON)
     };
   }
 

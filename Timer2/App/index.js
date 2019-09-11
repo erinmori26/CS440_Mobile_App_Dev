@@ -1,3 +1,9 @@
+/*
+ * Name: Erin Morikawa
+ * Updated: 9/10/2019
+ * CS 440 Project 1: Timer
+ */
+
 // react native for mobile, react for web
 import React from "react";
 import {
@@ -100,9 +106,14 @@ const formatNumber = number => `0${number}`.slice(-2); // single line = implicit
 
 // get remaining time (basic math) and format minutes/seconds
 const getRemaining = time => {
-  const minutes = Math.floor(time / 60);
-  const seconds = time - minutes * 60;
-  return { minutes: formatNumber(minutes), seconds: formatNumber(seconds) }; // basically defining new JSON obj to return
+  const hours = Math.floor(time / 60 / 60);
+  const minutes = Math.floor((time - hours * 60 * 60) / 60);
+  const seconds = time - hours * 60 * 60 - minutes * 60;
+  return {
+    hours: formatNumber(hours),
+    minutes: formatNumber(minutes),
+    seconds: formatNumber(seconds)
+  }; // basically defining new JSON obj to return
 };
 
 // array of numbers for minutes/seconds to display in picker
@@ -116,6 +127,7 @@ const createArray = length => {
   return arr;
 };
 
+const AVAILABLE_HOURS = createArray(24);
 const AVAILABLE_MINUTES = createArray(10);
 const AVAILABLE_SECONDS = createArray(60);
 
@@ -127,6 +139,7 @@ export default class App extends React.Component {
     isRunning: false,
     pausePressed: false,
     inPause: false,
+    selectedHours: "0",
     selectedMinutes: "0",
     selectedSeconds: "5"
   };
@@ -153,6 +166,7 @@ export default class App extends React.Component {
   start = () => {
     this.setState(state => ({
       remainingSeconds:
+        parseInt(state.selectedHours, 10) * 60 * 60 +
         parseInt(state.selectedMinutes, 10) * 60 + // string --> number, minutes --> seconds
         parseInt(state.selectedSeconds, 10), // add total seconds
       isRunning: true,
@@ -173,10 +187,19 @@ export default class App extends React.Component {
     clearInterval(this.interval); // finished with interval (clear memory)
     this.interval = null;
     this.setState({
-      selectedMinutes: Math.floor(this.state.remainingSeconds / 60),
+      selectedHours: Math.floor(this.state.remainingSeconds / 60 / 60),
+      selectedMinutes: Math.floor(
+        this.remainingSeconds -
+          (Math.floor(this.state.remainingSeconds / 60 / 60) * 60 * 60) / 60
+      ),
       selectedSeconds:
         this.state.remainingSeconds -
-        Math.floor(this.state.remainingSeconds / 60) * 60,
+        Math.floor(
+          Math.floor(
+            this.remainingSeconds -
+              (Math.floor(this.state.remainingSeconds / 60 / 60) * 60 * 60) / 60
+          ) * 60
+        ),
       isRunning: true,
       pausePressed: true
     });
@@ -188,8 +211,9 @@ export default class App extends React.Component {
     this.interval = null;
     this.setState({
       remainingSeconds: 5, // default
-      selectedMinutes: 0,
-      selectedSeconds: 5,
+      selectedHours: "0",
+      selectedMinutes: "0",
+      selectedSeconds: "5",
       isRunning: false,
       pausePressed: false
     });
@@ -198,6 +222,20 @@ export default class App extends React.Component {
   // create pickers to choose time to set
   renderPickers = () => (
     <View style={styles.pickerContainer}>
+      <Picker
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+        selectedValue={this.state.selectedHours}
+        onValueChange={itemValue => {
+          this.setState({ selectedHours: itemValue }); // update state with minutes when changed
+        }}
+        mode="dropdown"
+      >
+        {AVAILABLE_HOURS.map(value => (
+          <Picker.Item key={value} label={value} value={value} />
+        ))}
+      </Picker>
+      <Text style={styles.pickerItem}>hours</Text>
       <Picker
         style={styles.picker}
         itemStyle={styles.pickerItem}
@@ -232,7 +270,9 @@ export default class App extends React.Component {
   // React lifecycle method (override)
   // render display of app
   render() {
-    const { minutes, seconds } = getRemaining(this.state.remainingSeconds);
+    const { hours, minutes, seconds } = getRemaining(
+      this.state.remainingSeconds
+    );
 
     return (
       <View style={styles.container}>
@@ -240,7 +280,9 @@ export default class App extends React.Component {
 
         {// if the timer is running, display time counting down; else display pickers
         this.state.isRunning ? (
-          <Text style={styles.timerText}>{`${minutes}:${seconds}`}</Text>
+          <Text
+            style={styles.timerText}
+          >{`${hours}:${minutes}:${seconds}`}</Text>
         ) : (
           this.renderPickers()
         )}

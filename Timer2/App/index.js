@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   buttonStop: {
     width: screen.width / 3,
     height: screen.width / 3,
-    borderRadius: screen.width / 2,
+    borderRadius: screen.width / 3,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,
@@ -138,7 +138,6 @@ export default class App extends React.Component {
     remainingSeconds: 5,
     isRunning: false,
     pausePressed: false,
-    inPause: false,
     selectedHours: "0",
     selectedMinutes: "0",
     selectedSeconds: "5"
@@ -187,29 +186,8 @@ export default class App extends React.Component {
     clearInterval(this.interval); // finished with interval (clear memory)
     this.interval = null;
     this.setState({
-      // selectedHours: Math.floor(this.state.remainingSeconds / 60 / 60),
-      // selectedMinutes: Math.floor(
-      //   this.remainingSeconds -
-      //     (Math.floor(this.state.remainingSeconds / 60 / 60) * 60 * 60) / 60
-      // ),
-      // selectedSeconds:
-      //   this.state.remainingSeconds -
-      //   Math.floor(this.state.remainingSeconds / 60 / 60) * 60 * 60 -
-      //   Math.floor(
-      //     this.remainingSeconds -
-      //       (Math.floor(this.state.remainingSeconds / 60 / 60) * 60 * 60) / 60
-      //   ) *
-      //     60,
-
-      // selectedHours: Math.floor(this.state.remainingSeconds / 60 / 60),
-      // selectedMinutes: Math.floor(
-      //   this.remainingSeconds - (this.state.selectedHours * 60 * 60) / 60
-      // ),
-      // selectedSeconds:
-      //   this.state.remainingSeconds -
-      //   this.state.selectedHours * 60 * 60 -
-      //   this.state.selectedMinutes * 60,
-
+      // set selectedHours/Minutes/Seconds because it's called in the start function
+      // set to current remaining time to maintain state
       selectedHours: Math.floor(this.state.remainingSeconds / 60 / 60),
       selectedMinutes: Math.floor(
         (this.state.remainingSeconds -
@@ -252,7 +230,7 @@ export default class App extends React.Component {
         itemStyle={styles.pickerItem}
         selectedValue={this.state.selectedHours}
         onValueChange={itemValue => {
-          this.setState({ selectedHours: itemValue }); // update state with minutes when changed
+          this.setState({ selectedHours: itemValue }); // update state with hours when changed
         }}
         mode="dropdown"
       >
@@ -312,8 +290,8 @@ export default class App extends React.Component {
           this.renderPickers()
         )}
 
-        {this.state.isRunning ? (
-          this.state.pausePressed ? (
+        {this.state.isRunning ? ( // if the timer is running
+          this.state.pausePressed ? ( // if the paused, display start button; else display pause
             // START by STOP
             <TouchableOpacity
               onPress={this.start}
@@ -333,10 +311,11 @@ export default class App extends React.Component {
             </TouchableOpacity>
           )
         ) : (
+          // else (timer not running) display nothing (start already displayed below)
           <Text>none</Text>
         )}
 
-        {this.state.isRunning ? (
+        {this.state.isRunning ? ( // if the timer is running, display stop button; else display start
           // STOP
           <TouchableOpacity
             onPress={this.stop}

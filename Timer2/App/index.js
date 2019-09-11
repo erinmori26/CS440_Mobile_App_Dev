@@ -32,14 +32,41 @@ const styles = StyleSheet.create({
     marginTop: 30
   },
   buttonStop: {
+    width: screen.width / 3,
+    height: screen.width / 3,
+    borderRadius: screen.width / 2,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
     borderColor: "#FF851B"
   },
+  buttonPause: {
+    width: screen.width / 3,
+    height: screen.width / 3,
+    borderRadius: screen.width / 3,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+    borderColor: "#FFF700"
+  },
+  buttonStartPause: {
+    width: screen.width / 3,
+    height: screen.width / 3,
+    borderRadius: screen.width / 3,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+    borderColor: "#89AAFF"
+  },
   buttonText: {
-    fontSize: 45,
+    fontSize: 40,
     color: "#89AAFF"
   },
   buttonTextStop: {
     color: "#FF851B"
+  },
+  buttonTextPause: {
+    color: "#FFF700"
   },
   timerText: {
     color: "#fff",
@@ -98,6 +125,8 @@ export default class App extends React.Component {
   state = {
     remainingSeconds: 5,
     isRunning: false,
+    pausePressed: false,
+    inPause: false,
     selectedMinutes: "0",
     selectedSeconds: "5"
   };
@@ -126,7 +155,8 @@ export default class App extends React.Component {
       remainingSeconds:
         parseInt(state.selectedMinutes, 10) * 60 + // string --> number, minutes --> seconds
         parseInt(state.selectedSeconds, 10), // add total seconds
-      isRunning: true
+      isRunning: true,
+      pausePressed: false
     }));
 
     // update state every second
@@ -138,13 +168,30 @@ export default class App extends React.Component {
     }, 1000);
   };
 
+  ////////////// PAUSE timer function ////////////////
+  pause = () => {
+    clearInterval(this.interval); // finished with interval (clear memory)
+    this.interval = null;
+    this.setState({
+      selectedMinutes: Math.floor(this.state.remainingSeconds / 60),
+      selectedSeconds:
+        this.state.remainingSeconds -
+        Math.floor(this.state.remainingSeconds / 60) * 60,
+      isRunning: true,
+      pausePressed: true
+    });
+  };
+
   // stop timer function
   stop = () => {
     clearInterval(this.interval); // finished with interval (clear memory)
     this.interval = null;
     this.setState({
       remainingSeconds: 5, // default
-      isRunning: false
+      selectedMinutes: 0,
+      selectedSeconds: 5,
+      isRunning: false,
+      pausePressed: false
     });
   };
 
@@ -190,14 +237,40 @@ export default class App extends React.Component {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
+
         {// if the timer is running, display time counting down; else display pickers
         this.state.isRunning ? (
           <Text style={styles.timerText}>{`${minutes}:${seconds}`}</Text>
         ) : (
           this.renderPickers()
         )}
-        {// if the timer is running, display the stop button; else display the start button
-        this.state.isRunning ? (
+
+        {this.state.isRunning ? (
+          this.state.pausePressed ? (
+            // START by STOP
+            <TouchableOpacity
+              onPress={this.start}
+              style={[styles.button, styles.buttonStartPause]}
+            >
+              <Text style={styles.buttonText}>Start</Text>
+            </TouchableOpacity>
+          ) : (
+            // PAUSE
+            <TouchableOpacity
+              onPress={this.pause}
+              style={[styles.button, styles.buttonPause]}
+            >
+              <Text style={[styles.buttonText, styles.buttonTextPause]}>
+                Pause
+              </Text>
+            </TouchableOpacity>
+          )
+        ) : (
+          <Text>none</Text>
+        )}
+
+        {this.state.isRunning ? (
+          // STOP
           <TouchableOpacity
             onPress={this.stop}
             style={[styles.button, styles.buttonStop]}

@@ -187,19 +187,44 @@ export default class App extends React.Component {
     clearInterval(this.interval); // finished with interval (clear memory)
     this.interval = null;
     this.setState({
+      // selectedHours: Math.floor(this.state.remainingSeconds / 60 / 60),
+      // selectedMinutes: Math.floor(
+      //   this.remainingSeconds -
+      //     (Math.floor(this.state.remainingSeconds / 60 / 60) * 60 * 60) / 60
+      // ),
+      // selectedSeconds:
+      //   this.state.remainingSeconds -
+      //   Math.floor(this.state.remainingSeconds / 60 / 60) * 60 * 60 -
+      //   Math.floor(
+      //     this.remainingSeconds -
+      //       (Math.floor(this.state.remainingSeconds / 60 / 60) * 60 * 60) / 60
+      //   ) *
+      //     60,
+
+      // selectedHours: Math.floor(this.state.remainingSeconds / 60 / 60),
+      // selectedMinutes: Math.floor(
+      //   this.remainingSeconds - (this.state.selectedHours * 60 * 60) / 60
+      // ),
+      // selectedSeconds:
+      //   this.state.remainingSeconds -
+      //   this.state.selectedHours * 60 * 60 -
+      //   this.state.selectedMinutes * 60,
+
       selectedHours: Math.floor(this.state.remainingSeconds / 60 / 60),
       selectedMinutes: Math.floor(
-        this.remainingSeconds -
-          (Math.floor(this.state.remainingSeconds / 60 / 60) * 60 * 60) / 60
+        (this.state.remainingSeconds -
+          Math.floor(this.state.remainingSeconds / 60 / 60) * 60 * 60) /
+          60
       ),
       selectedSeconds:
         this.state.remainingSeconds -
+        Math.floor(this.state.remainingSeconds / 60 / 60) * 60 * 60 -
         Math.floor(
-          Math.floor(
-            this.remainingSeconds -
-              (Math.floor(this.state.remainingSeconds / 60 / 60) * 60 * 60) / 60
-          ) * 60
-        ),
+          (this.state.remainingSeconds -
+            Math.floor(this.state.remainingSeconds / 60 / 60) * 60 * 60) /
+            60
+        ) *
+          60,
       isRunning: true,
       pausePressed: true
     });

@@ -17,6 +17,8 @@ import {
   Platform
 } from "react-native";
 
+import Row from "./components/Row"; // display buttons in row
+
 const screen = Dimensions.get("window"); // dimensions of window for positioning
 
 // all styles
@@ -35,14 +37,15 @@ const styles = StyleSheet.create({
     borderRadius: screen.width / 2,
     alignItems: "center",
     justifyContent: "center",
+    marginRight: 30,
     marginTop: 30
   },
   buttonStop: {
     width: screen.width / 3,
     height: screen.width / 3,
     borderRadius: screen.width / 3,
-    alignItems: "center",
-    justifyContent: "center",
+    marginRight: 0,
+    marginLeft: 40,
     marginTop: 40,
     borderColor: "#FF851B"
   },
@@ -50,8 +53,7 @@ const styles = StyleSheet.create({
     width: screen.width / 3,
     height: screen.width / 3,
     borderRadius: screen.width / 3,
-    alignItems: "center",
-    justifyContent: "center",
+    marginRight: 10,
     marginTop: 40,
     borderColor: "#FFF700"
   },
@@ -59,8 +61,7 @@ const styles = StyleSheet.create({
     width: screen.width / 3,
     height: screen.width / 3,
     borderRadius: screen.width / 3,
-    alignItems: "center",
-    justifyContent: "center",
+    marginRight: 10,
     marginTop: 40,
     borderColor: "#89AAFF"
   },
@@ -289,45 +290,48 @@ export default class App extends React.Component {
         ) : (
           this.renderPickers()
         )}
-
-        {this.state.isRunning ? ( // if the timer is running
-          this.state.pausePressed ? ( // if the paused, display start button; else display pause
-            // START by STOP
-            <TouchableOpacity
-              onPress={this.start}
-              style={[styles.button, styles.buttonStartPause]}
-            >
-              <Text style={styles.buttonText}>Start</Text>
-            </TouchableOpacity>
+        <Row>
+          {this.state.isRunning ? ( // if the timer is running
+            this.state.pausePressed ? ( // if the paused, display start button; else display pause
+              // START by STOP
+              <TouchableOpacity
+                onPress={this.start}
+                style={[styles.button, styles.buttonStartPause]}
+              >
+                <Text style={styles.buttonText}>Start</Text>
+              </TouchableOpacity>
+            ) : (
+              // PAUSE
+              <TouchableOpacity
+                onPress={this.pause}
+                style={[styles.button, styles.buttonPause]}
+              >
+                <Text style={[styles.buttonText, styles.buttonTextPause]}>
+                  Pause
+                </Text>
+              </TouchableOpacity>
+            )
           ) : (
-            // PAUSE
+            // else (timer not running) display nothing (start already displayed below)
+            <Text>none</Text>
+          )}
+
+          {this.state.isRunning ? ( // if the timer is running, display stop button; else display start
+            // STOP
             <TouchableOpacity
-              onPress={this.pause}
-              style={[styles.button, styles.buttonPause]}
+              onPress={this.stop}
+              style={[styles.button, styles.buttonStop]}
             >
-              <Text style={[styles.buttonText, styles.buttonTextPause]}>
-                Pause
+              <Text style={[styles.buttonText, styles.buttonTextStop]}>
+                Stop
               </Text>
             </TouchableOpacity>
-          )
-        ) : (
-          // else (timer not running) display nothing (start already displayed below)
-          <Text>none</Text>
-        )}
-
-        {this.state.isRunning ? ( // if the timer is running, display stop button; else display start
-          // STOP
-          <TouchableOpacity
-            onPress={this.stop}
-            style={[styles.button, styles.buttonStop]}
-          >
-            <Text style={[styles.buttonText, styles.buttonTextStop]}>Stop</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity onPress={this.start} style={styles.button}>
-            <Text style={styles.buttonText}>Start</Text>
-          </TouchableOpacity>
-        )}
+          ) : (
+            <TouchableOpacity onPress={this.start} style={styles.button}>
+              <Text style={styles.buttonText}>Start</Text>
+            </TouchableOpacity>
+          )}
+        </Row>
       </View>
     );
   }

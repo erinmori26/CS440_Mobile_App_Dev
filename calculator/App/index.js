@@ -46,10 +46,9 @@ export default class App extends React.Component {
         <StatusBar barStyle="light-content" />
         <SafeAreaView>
           <Text style={styles.operator}>
-            {// TODO: display last equation
+            {// display last equation
             this.state.equalPressed == true
-              ? // this.state.prepreValue != null
-                this.state.prepreValue +
+              ? this.state.prepreValue +
                 " " +
                 this.state.opDisplay +
                 " " +
@@ -59,7 +58,7 @@ export default class App extends React.Component {
               : ""}
           </Text>
           <Text style={styles.operator}>
-            {///////// display selected operator above number (except after = pressed) //////////
+            {// display selected operator above number (except after = pressed)
             this.state.equalPressed == true ? "" : this.state.opDisplay}
           </Text>
           <Text style={styles.value}>

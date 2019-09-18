@@ -8,7 +8,7 @@ export const initialState = {
   opDisplay: null // store operator that is displayed so operator state value can change
 };
 
-//////////
+// for spreading (to not display equation)
 export const clearDisplayState = {
   opDisplay: null,
   operator: null,
@@ -41,7 +41,7 @@ export const handleEqual = state => {
   const equationDisplayState = {
     prepreValue: previous,
     previousValue: current,
-    equalPressed: true
+    equalPressed: true // display equation (index.js)
   };
 
   // divide
@@ -94,33 +94,33 @@ const calculator = (type, value, state) => {
         equalPressed: false,
         opDisplay: replaceVal,
         operator: value,
-        prepreValue: state.previousValue,
+        prepreValue: state.previousValue, // store previous value
         previousValue: state.currentValue, // store current value
         currentValue: "0" // reset current value
       };
     case "equal":
-      if (state.equalPressed == true) break;
+      if (state.equalPressed == true) break; // cannot press = multiple times in a row
       return handleEqual(state);
     case "clear":
       return initialState;
     case "posneg":
       return {
         currentValue: `${parseFloat(state.currentValue) * -1}`, // string to float * -1
-        ...clearDisplayState
-      };
+        ...clearDisplayState // do not display equation
+      }; // BUG: cannot use negative number as second operand because operator is cleared
     case "percentage":
       return {
         currentValue: `${parseFloat(state.currentValue) * 0.01}`, // string to float * 0.01
-        ...clearDisplayState
+        ...clearDisplayState // do not display equation
       };
     case "squareroot":
-      if (state.equalPressed == true) break;
+      if (state.equalPressed == true) break; // cannot press sqrt multiple times in a row
       return {
         prepreValue: "",
         opDisplay: value,
         previousValue: state.currentValue,
         currentValue: `${Math.sqrt(parseFloat(state.currentValue))}`,
-        equalPressed: true
+        equalPressed: true // display equation (index.js)
       };
     default:
       // always return state
@@ -129,3 +129,4 @@ const calculator = (type, value, state) => {
 };
 
 export default calculator;
+Q;

@@ -22,18 +22,6 @@ const MainStack = createStackNavigator({
       }
     })
   }
-  // Home: {
-  //   screen: QuizIndex,
-  //   navigationOptions: {
-  //     headerTitle: "Quizzes"
-  //   }
-  // }
 });
-
-// const xxx = StackNavigator({
-//   Home: { screen: QuizIndex }
-// });
-
-// AppRegistry.registerComponent("Quiz", () => MainStack);
 
 export default createAppContainer(MainStack);

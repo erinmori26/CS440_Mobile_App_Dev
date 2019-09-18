@@ -61,7 +61,7 @@ class Quiz extends React.Component {
 
       // if answered all questions, go back to quiz index page
       if (nextIndex >= state.totalCount) {
-        nextIndex = 0; // reset index to restart loop for next question
+        nextIndex = 0; // reset index to restart loop for next question (important b/c passed into activeQuestionIndex in return)
         this.props.navigation.popToTop();
       }
 
@@ -72,6 +72,7 @@ class Quiz extends React.Component {
     });
   };
 
+  // screen being mounted
   render() {
     const questions = this.props.navigation.getParam("questions", []); // gets array of questions in category selected
     const question = questions[this.state.activeQuestionIndex]; // gets question at index
@@ -89,7 +90,9 @@ class Quiz extends React.Component {
             <Text style={styles.text}>{question.question}</Text>
 
             <ButtonContainer>
-              {question.answers.map(answer => (
+              {// get answer array from question object and maps each item to buttton
+              // calls answer function when button pressed
+              question.answers.map(answer => (
                 <Button
                   key={answer.id}
                   text={answer.text}

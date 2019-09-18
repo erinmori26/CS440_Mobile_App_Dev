@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
   }
 });
 
+// define default behaivor of button (if no onPress method passed in)
 export const Button = ({ text, onPress = () => {} }) => (
   <TouchableOpacity onPress={onPress} style={styles.button}>
     <Text style={styles.text}>{text}</Text>

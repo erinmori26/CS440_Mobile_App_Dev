@@ -6,6 +6,8 @@ import spaceQuestions from "../data/space";
 import westernsQuestions from "../data/westerns";
 import computerQuestions from "../data/computers";
 
+// JSX, not class
+// screen doesn't change
 export default ({ navigation }) => (
   <ScrollView>
     <StatusBar barStyle="dark-content" />

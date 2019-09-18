@@ -18,15 +18,23 @@ const styles = StyleSheet.create({
     textAlign: "right",
     marginRight: 20,
     marginBottom: 10
+  },
+  operator: {
+    color: "#12EE28",
+    fontSize: 40,
+    textAlignVertical: "top",
+    textAlign: "right",
+    marginRight: 20,
+    marginBottom: 10
   }
 });
 
 export default class App extends React.Component {
   state = initialState;
 
-  // takes in num/operator and value
+  // Custom Method: Called when any button is pressed.
+  // Calculator takes in information about button type and value of button and returns an updated state.
   handleTap = (type, value) => {
-    // update state
     this.setState(state => {
       return calculator(type, value, state);
     });
@@ -37,6 +45,23 @@ export default class App extends React.Component {
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
         <SafeAreaView>
+          <Text style={styles.operator}>
+            {// TODO: display last equation
+            this.state.equalPressed == true
+              ? // this.state.prepreValue != null
+                this.state.prepreValue +
+                " " +
+                this.state.opDisplay +
+                " " +
+                this.state.previousValue +
+                " = " +
+                this.state.currentValue
+              : ""}
+          </Text>
+          <Text style={styles.operator}>
+            {///////// display selected operator above number (except after = pressed) //////////
+            this.state.equalPressed == true ? "" : this.state.opDisplay}
+          </Text>
           <Text style={styles.value}>
             {parseFloat(this.state.currentValue)
               .toString()
@@ -46,7 +71,9 @@ export default class App extends React.Component {
              * BUT shows commas after decimal point
              */
             }
-            {/*parseFloat(this.state.currentValue).toLocaleString()  <-- doesn't work for android*/}
+            {/*parseFloat(
+              this.state.currentValue
+            ).toLocaleString() /*<-- doesn't work for android, doesn't display long decimal num */}
           </Text>
           <Row>
             <Button
@@ -106,10 +133,11 @@ export default class App extends React.Component {
 
           <Row>
             <Button
-              text="0"
-              size="double"
-              onPress={() => this.handleTap("number", 0)}
+              text="√"
+              theme="accent"
+              onPress={() => this.handleTap("squareroot", "√")}
             />
+            <Button text="0" onPress={() => this.handleTap("number", 0)} />
             <Button text="." onPress={() => this.handleTap("number", ".")} />
             <Button
               text="="

@@ -21,12 +21,12 @@ const styles = StyleSheet.create({
     borderRadius: Math.floor(buttonWidth),
     margin: 5
   },
-  buttonDouble: {
-    width: screen.width / 2 - 10, // factor in margin
-    flex: 0, // counteract flex from button
-    alignItems: "flex-start", // text align left in button
-    paddingLeft: 36
-  },
+  // buttonDouble: {
+  //   width: screen.width / 2 - 10, // factor in margin
+  //   flex: 0, // counteract flex from button
+  //   alignItems: "flex-start", // text align left in button
+  //   paddingLeft: 36
+  // },
   buttonSecondary: {
     backgroundColor: "#a6a6a6"
   },
@@ -39,9 +39,9 @@ export default ({ onPress, text, size, theme }) => {
   const buttonStyles = [styles.button];
   const textStyles = [styles.text];
 
-  if (size === "double") {
-    buttonStyles.push(styles.buttonDouble); // longer button
-  }
+  // if (size === "double") {
+  //   buttonStyles.push(styles.buttonDouble); // longer button
+  // }
 
   if (theme === "secondary") {
     buttonStyles.push(styles.buttonSecondary); // gray button

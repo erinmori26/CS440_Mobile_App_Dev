@@ -1,8 +1,11 @@
 import React from "react";
 import { View, StyleSheet, StatusBar, Text, SafeAreaView } from "react-native";
+import ProgressBarAnimated from "react-native-progress-bar-animated"; // for progress bar
 
 import { Button, ButtonContainer } from "../components/Button";
 import { Alert } from "../components/Alert";
+
+const screen = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
@@ -21,16 +24,22 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 100,
     justifyContent: "space-between"
+  },
+  progressBar: {
+    width: screen.width - 30,
+    backgroundColorOnComplete: "#6CC644"
   }
 });
 
 class Quiz extends React.Component {
+  // STATE
   state = {
     correctCount: 0,
     totalCount: this.props.navigation.getParam("questions", []).length,
     activeQuestionIndex: 0,
     answered: false,
-    answerCorrect: false
+    answerCorrect: false,
+    remainingSeconds: 20
   };
 
   // METHOD: set state when question is answered
@@ -72,6 +81,39 @@ class Quiz extends React.Component {
     });
   };
 
+  /******************************/
+  // // start timer function
+  // start = () => {
+  //   this.setState(state => ({
+  //     remainingSeconds: 20,
+  //     isRunning: true,
+  //     pausePressed: false
+  //   }));
+
+  //   // update state every second
+  //   this.interval = setInterval(() => {
+  //     // pass in method with no parameters that calls this.setState
+  //     this.setState(state => ({
+  //       remainingSeconds: state.remainingSeconds - 1
+  //     }));
+  //   }, 1000);
+  // }
+
+  increase = () => {
+    this.interval = setInterval(() => {
+      // pass in method with no parameters that calls this.setState
+      this.setState(state => ({
+        remainingSeconds: state.remainingSeconds - 1
+      }));
+    }, 1000);
+
+    // this.setState({
+    //   [key]: this.state[key] + value,
+    // });
+  };
+
+  /******************************/
+
   // screen being mounted
   render() {
     const questions = this.props.navigation.getParam("questions", []); // gets array of questions in category selected
@@ -102,8 +144,40 @@ class Quiz extends React.Component {
             </ButtonContainer>
           </View>
 
+          {/************************************/}
+          <ProgressBarAnimated
+            style={styles.progressBar}
+            onComplete={() => {
+              Alert.alert("TODO: SHOW RAN OUT OF TIME AND MOVE ON");
+            }}
+            value={this.state.progress}
+          >
+            this.increase.bind(this, 'progress', 20)
+          </ProgressBarAnimated>
+
+          {/* <View style={styles.container}>
+        <View>
+          <Text style={styles.label}>Bar with backgroundColorOnComplete prop</Text>
+          <ProgressBarAnimated
+            width={barWidth}
+            value={this.state.progress}
+            backgroundColorOnComplete="#6CC644"
+          />
+          <View style={styles.buttonContainer}>
+            <View style={styles.buttonInner}>
+              <Button
+                title="Increase 20%"
+                onPress={this.increase.bind(this, 'progress', 20)}
+              />
+            </View>
+          </View>
+        </View> */}
+
+          {/************************************/}
+
           <Text style={styles.text}>
-            {`${this.state.correctCount}/${this.state.totalCount}`}
+            {// number of current question / total number of questions
+            `${this.state.activeQuestionIndex + 1}/${this.state.totalCount}`}
           </Text>
         </SafeAreaView>
         <Alert

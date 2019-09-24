@@ -1,6 +1,13 @@
 import React from "react";
-import { View, StyleSheet, StatusBar, Text, SafeAreaView } from "react-native";
-import ProgressBarAnimated from "react-native-progress-bar-animated"; // for progress bar
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  Text,
+  SafeAreaView,
+  Dimensions
+} from "react-native";
+import { ProgressBarAnimated } from "react-native-progress-bar-animated"; // for progress bar
 
 import { Button, ButtonContainer } from "../components/Button";
 import { Alert } from "../components/Alert";
@@ -26,8 +33,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   progressBar: {
-    width: screen.width - 30,
-    backgroundColorOnComplete: "#6CC644"
+    width: screen.width - 30
+    //backgroundColorOnComplete: "#6CC644"
   }
 });
 
@@ -39,7 +46,8 @@ class Quiz extends React.Component {
     activeQuestionIndex: 0,
     answered: false,
     answerCorrect: false,
-    remainingSeconds: 20
+    remainingSeconds: 20,
+    progress: 0 // track time for question
   };
 
   // METHOD: set state when question is answered
@@ -82,34 +90,32 @@ class Quiz extends React.Component {
   };
 
   /******************************/
-  // // start timer function
-  // start = () => {
-  //   this.setState(state => ({
-  //     remainingSeconds: 20,
-  //     isRunning: true,
-  //     pausePressed: false
-  //   }));
+  // start timer function
+  start = () => {
+    this.setState(state => ({
+      progress: 0
+    }));
 
-  //   // update state every second
-  //   this.interval = setInterval(() => {
-  //     // pass in method with no parameters that calls this.setState
-  //     this.setState(state => ({
-  //       remainingSeconds: state.remainingSeconds - 1
-  //     }));
-  //   }, 1000);
-  // }
+    //   // update state every second
+    //   this.interval = setInterval(() => {
+    //     // pass in method with no parameters that calls this.setState
+    //     this.setState(state => ({
+    //       remainingSeconds: state.remainingSeconds - 1
+    //     }));
+    //   }, 1000);
+    // }
 
-  increase = () => {
-    this.interval = setInterval(() => {
-      // pass in method with no parameters that calls this.setState
-      this.setState(state => ({
-        remainingSeconds: state.remainingSeconds - 1
-      }));
-    }, 1000);
+    increase = () => {
+      this.interval = setInterval(() => {
+        this.setState(state => ({
+          progress: state.progress - 1
+        }));
+      }, 1000);
 
-    // this.setState({
-    //   [key]: this.state[key] + value,
-    // });
+      // this.setState({
+      //   [key]: this.state[key] + value,
+      // });
+    };
   };
 
   /******************************/
@@ -151,9 +157,10 @@ class Quiz extends React.Component {
               Alert.alert("TODO: SHOW RAN OUT OF TIME AND MOVE ON");
             }}
             value={this.state.progress}
-          >
-            this.increase.bind(this, 'progress', 20)
-          </ProgressBarAnimated>
+          />
+          <View style={styles.Button}>
+            <Button title="click" onPress={this.start} />
+          </View>
 
           {/* <View style={styles.container}>
         <View>

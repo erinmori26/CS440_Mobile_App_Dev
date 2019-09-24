@@ -61,6 +61,7 @@ export default class Details extends React.Component {
 
   componentDidMount() {
     navigator.geolocation.getCurrentPosition(position => {
+      // key = coords, value = lat/lon
       this.getCurrentWeather({ coords: position.coords }); // weather
       this.getForecast({ coords: position.coords }); // forecast
     });
@@ -139,6 +140,7 @@ export default class Details extends React.Component {
       })
       .catch(err => {
         console.log("forecast error", err);
+        this.handleError(); // CHECK: error message same?
       });
 
   render() {
@@ -151,6 +153,7 @@ export default class Details extends React.Component {
       );
     }
 
+    // pull current weather details (destructure)
     const { weather, main } = this.state.currentWeather;
 
     return (
@@ -167,6 +170,7 @@ export default class Details extends React.Component {
               <H2>{`High: ${Math.round(main.temp_max)}°`}</H2>
             </BasicRow>
 
+            {/* takes item and maps across days to display in list */}
             <View style={{ paddingHorizontal: 10, marginTop: 20 }}>
               {this.state.forecast.map(day => (
                 <BasicRow

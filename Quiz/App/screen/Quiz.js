@@ -7,8 +7,7 @@ import {
   SafeAreaView,
   Dimensions
 } from "react-native";
-// import { ProgressBar } from "react-native-progress-bar";
-// var ProgressBar = require("react-native-progress-bar");
+import AnimatedBar from "react-native-animated-bar"; // for timer bar
 
 import { Button, ButtonContainer } from "../components/Button";
 import { Alert } from "../components/Alert";
@@ -26,17 +25,14 @@ const styles = StyleSheet.create({
     fontSize: 25,
     textAlign: "center",
     letterSpacing: -0.02,
-    fontWeight: "600"
+    fontWeight: "600",
+    marginBottom: 10
   },
   safearea: {
     flex: 1,
-    marginTop: 100,
+    marginTop: 40,
     justifyContent: "space-between"
   }
-  // progressBar: {
-  //   width: screen.width - 30
-  //   backgroundStyle: "#6CC644"
-  // }
 });
 
 class Quiz extends React.Component {
@@ -47,7 +43,6 @@ class Quiz extends React.Component {
     activeQuestionIndex: 0,
     answered: false,
     answerCorrect: false,
-    //remainingSeconds: 20,
     progress: 0 // track time for question
   };
 
@@ -85,40 +80,34 @@ class Quiz extends React.Component {
 
       return {
         activeQuestionIndex: nextIndex,
-        answered: false
+        answered: false,
+        progress: 0
       };
     });
   };
 
   /******************************/
-  // start timer function
-  // start = () => {
-  //   this.setState(state => ({
-  //     progress: 0
-  //   }));
-
-  //   // update state every second
-  //   this.interval = setInterval(() => {
-  //     // pass in method with no parameters that calls this.setState
-  //     this.setState(state => ({
-  //       remainingSeconds: state.remainingSeconds - 1
-  //     }));
-  //   }, 1000);
+  // clear to avoid memory leaks
+  // componentWillUnmount() {
+  //   if (this.interval) {
+  //     clearInterval(this.interval);
+  //   }
   // }
 
-  increase = () => {
-    this.interval = setInterval(() => {
-      this.setState(state => ({
-        progress: state.progress - 1
-      }));
+  // functionality of timer bar
+  componentDidMount() {
+    setInterval(() => {
+      if (this.state.progress >= 0.9) {
+        // if time is up, move to next question
+        setTimeout(() => this.nextQuestion(), 750);
+      }
+      this.setState(state => {
+        return {
+          progress: state.progress + 0.1 // increment timer
+        };
+      });
     }, 1000);
-  };
-
-  // this.setState({
-  //   [key]: this.state[key] + value,
-  // });
-  //   };
-  // };
+  }
 
   /******************************/
 
@@ -154,12 +143,12 @@ class Quiz extends React.Component {
 
           {/************************************/}
           <View>
-            {/* <ProgressBar
-              fillStyle={{}}
-              backgroundStyle={{ backgroundColor: "#cccccc", borderRadius: 2 }}
-              style={{ marginTop: 10, width: screen.width - 30 }}
-              progress={this.state.increase}
-            /> */}
+            <AnimatedBar
+              width={screen.width - 30}
+              barColor={"#14e329"}
+              fillColor={"#ffffff"}
+              progress={this.state.progress}
+            />
           </View>
           {/************************************/}
 

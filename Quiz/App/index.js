@@ -3,6 +3,7 @@ import { createAppContainer } from "react-navigation";
 
 import QuizIndex from "./screen/QuizIndex";
 import Quiz from "./screen/Quiz";
+import EndScreen from "./screen/EndScreen";
 
 const MainStack = createStackNavigator({
   QuizIndex: {
@@ -21,6 +22,12 @@ const MainStack = createStackNavigator({
         borderBottomColor: navigation.getParam("color") // set same color
       }
     })
+  },
+  EndScreen: {
+    screen: EndScreen,
+    navigationOptions: {
+      headerTitle: "End"
+    }
   }
 });
 

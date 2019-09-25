@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   Dimensions
 } from "react-native";
-import AnimatedBar from "react-native-animated-bar"; // for timer bar
+import AnimatedBar from "react-native-animated-bar";
 
 import { Button, ButtonContainer } from "../components/Button";
 import { Alert } from "../components/Alert";
@@ -25,13 +25,16 @@ const styles = StyleSheet.create({
     fontSize: 25,
     textAlign: "center",
     letterSpacing: -0.02,
-    fontWeight: "600",
-    marginBottom: 10
+    fontWeight: "600"
   },
   safearea: {
     flex: 1,
-    marginTop: 40,
+    marginTop: 100,
     justifyContent: "space-between"
+  },
+  progressBar: {
+    width: screen.width - 30,
+    backgroundColor: "#6CC644"
   }
 });
 
@@ -43,12 +46,16 @@ class Quiz extends React.Component {
     activeQuestionIndex: 0,
     answered: false,
     answerCorrect: false,
+    //remainingSeconds: 20,
     progress: 0 // track time for question
   };
 
   // METHOD: set state when question is answered
   answer = correct => {
     this.setState(
+      // () => {
+      //   this.time();
+      // },
       state => {
         const nextState = { answered: true };
 
@@ -57,6 +64,10 @@ class Quiz extends React.Component {
           nextState.answerCorrect = true; // mark as correct
         } else {
           nextState.answerCorrect = false; // mark as incorrect
+        }
+
+        if (this.state.progress >= 1) {
+          nextState.answerCorrect = false; // if time runs out, incorrect
         }
 
         return nextState;
@@ -75,18 +86,109 @@ class Quiz extends React.Component {
       // if answered all questions, go back to quiz index page
       if (nextIndex >= state.totalCount) {
         nextIndex = 0; // reset index to restart loop for next question (important b/c passed into activeQuestionIndex in return)
-        this.props.navigation.navigate("EndScreen");
+        this.props.navigation.popToTop();
       }
 
       return {
         activeQuestionIndex: nextIndex,
-        answered: false,
-        progress: 0
+        answered: false
       };
     });
   };
 
   /******************************/
+  // start timer function
+
+  time = () => {
+    this.setState({
+      progress: 0
+    });
+
+    // update state every second
+    this.interval = setInterval(() => {
+      this.setState(state => ({
+        progress: state.progress + 0.1
+      }));
+    }, 1000);
+  };
+
+  // timer cannot go above 10 seconds
+  // componentDidUpdate() {
+  //   if (this.state.progress >= 1) {
+  //     () => {
+  //       this.nextQuestion();
+  //     }; // delay to display image
+  //   }
+  // }
+
+  // clear to avoid memory leaks
+  componentWillUnmount() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+  }
+
+  componentDidMount() {
+    this.setState({
+      progress: 0
+    });
+
+    // update state every second
+    this.interval = setInterval(() => {
+      this.setState(state => ({
+        progress: state.progress + 0.1
+      }));
+    }, 1000);
+
+    // if (progress >= 1) {
+    // }
+  }
+
+  // start timer function
+
+  // time = () => {
+  //   this.setState({
+  //     progress: 0
+  //   });
+
+  //   // update state every second
+  //   this.interval = setInterval(() => {
+  //     this.setState(state => ({
+  //       progress: state.progress + 0.1
+  //     }));
+  //   }, 1000);
+  // };
+
+  // METHOD: move to next question
+  // timeUp = () => {
+  //   this.setState(state => {
+  //     let nextIndex = state.activeQuestionIndex + 1; // move to next question index
+
+  //     // if answered all questions, go back to quiz index page
+  //     if (nextIndex >= state.totalCount) {
+  //       nextIndex = 0; // reset index to restart loop for next question (important b/c passed into activeQuestionIndex in return)
+  //       this.props.navigation.popToTop();
+  //     }
+
+  //     return {
+  //       activeQuestionIndex: nextIndex,
+  //       answerCorrect: false,
+  //       answered: false,
+  //       progress: 0
+  //     };
+  //   });
+  // };
+
+  // timer cannot go above 10 seconds
+  // componentDidUpdate() {
+  //   if (this.state.progress >= 0.9) {
+  //     //this.state.answerCorrect = false;
+  //     // Alert(false, true);
+  //     setTimeout(() => this.nextQuestion(), 500);
+  //     // this.nextQuestion();
+  //   }
+  // }
+
   // clear to avoid memory leaks
   // componentWillUnmount() {
   //   if (this.interval) {
@@ -94,20 +196,35 @@ class Quiz extends React.Component {
   //   }
   // }
 
-  // functionality of timer bar
-  componentDidMount() {
-    setInterval(() => {
-      if (this.state.progress >= 0.9) {
-        // if time is up, move to next question
-        setTimeout(() => this.nextQuestion(), 750);
-      }
-      this.setState(state => {
-        return {
-          progress: state.progress + 0.1 // increment timer
-        };
-      });
-    }, 1000);
-  }
+  // componentDidMount() {
+  //   this.setState({
+  //     progress: 0
+  //   });
+
+  //   // update state every second
+  //   this.interval = setInterval(() => {
+  //     this.setState(state => ({
+  //       progress: state.progress + 0.1
+  //     }));
+  //   }, 1000);
+
+  // if (progress >= 1) {
+  // }
+  //}
+
+  // increase = () => {
+  //   this.interval = setInterval(() => {
+  //     this.setState(state => ({
+  //       progress: state.progress - 1
+  //     }));
+  //   }, 1000);
+  // };
+
+  // this.setState({
+  //   [key]: this.state[key] + value,
+  // });
+  //   };
+  // };
 
   /******************************/
 
@@ -143,10 +260,14 @@ class Quiz extends React.Component {
 
           {/************************************/}
           <View>
+            {/* <ProgressBar
+              fillStyle={{}}
+              backgroundStyle={{ backgroundColor: "#cccccc", borderRadius: 2 }}
+              style={{ marginTop: 10, width: screen.width - 30 }}
+              progress={this.state.increase}
+            /> */}
             <AnimatedBar
-              width={screen.width - 30}
-              barColor={"#14e329"}
-              fillColor={"#ffffff"}
+              style={styles.progressBar}
               progress={this.state.progress}
             />
           </View>

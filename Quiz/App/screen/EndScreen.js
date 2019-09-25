@@ -1,41 +1,46 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 import { Button, ButtonContainer } from "../components/Button";
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#36B1F0",
+    backgroundColor: "#000080",
     flex: 1,
     paddingHorizontal: 20
   },
   text: {
-    color: "#000000",
+    color: "#fff",
     fontSize: 25,
     textAlign: "center",
     letterSpacing: -0.02,
-    fontWeight: "600"
+    marginTop: 30
   },
-  safearea: {
-    flex: 1,
-    marginTop: 100,
-    justifyContent: "space-between"
+  buttonText: {
+    color: "#000"
+  },
+  button: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    paddingVertical: 15,
+    marginLeft: 120,
+    alignItems: "center",
+    justifyContent: "center"
   }
 });
 
 class EndScreen extends React.Component {
   render() {
-    //const totalCorrect = this.props.navigation.getParam("Quiz", []);
-
     return (
       <View style={styles.container}>
-        <Text> Thank you for taking this quiz! </Text>
-
+        <Text style={styles.text}>Thank you for taking this quiz!</Text>
         <ButtonContainer>
-          <Button
-            text="Back to start"
+          <TouchableOpacity
             onPress={() => this.props.navigation.popToTop()}
-          />
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}> Back to Start </Text>
+          </TouchableOpacity>
         </ButtonContainer>
       </View>
     );

@@ -4,7 +4,10 @@ import {
   ScrollView,
   SafeAreaView,
   View,
-  Alert
+  Alert,
+  TouchableOpacity,
+  StyleSheet,
+  Text
 } from "react-native";
 import { format } from "date-fns";
 
@@ -14,6 +17,12 @@ import { WeatherIcon } from "../components/WeatherIcon";
 import { BasicRow } from "../components/List";
 import { H1, H2, P } from "../components/Text";
 import { addRecentSearch } from "../util/recentSearch";
+
+const styles = StyleSheet.create({
+  temp: {
+    tintColor: "#fff"
+  }
+});
 
 const groupForecastByDay = list => {
   const data = {};
@@ -56,7 +65,8 @@ export default class Details extends React.Component {
     currentWeather: {},
     loadingCurrentWeather: true, // flag for loading container
     forecast: [],
-    loadingForecast: true // flag for loading container
+    loadingForecast: true, // flag for loading container
+    newTemp: 0 // PLACEHOLDER FOR NEW TEMP
   };
 
   componentDidMount() {
@@ -110,7 +120,8 @@ export default class Details extends React.Component {
           this.props.navigation.setParams({ title: response.name }); // show city being shown
           this.setState({
             currentWeather: response,
-            loadingCurrentWeather: false
+            loadingCurrentWeather: false,
+            newTemp: response.main.temp
           });
           // add search to search history
           addRecentSearch({
@@ -143,6 +154,16 @@ export default class Details extends React.Component {
         this.handleError(); // CHECK: error message same?
       });
 
+  //////////////////
+  convert = () => {
+    curTemp = this.state.currentWeather.main.temp;
+    CTemp = (curTemp - 32) * (5 / 9);
+    this.setState({
+      newTemp: CTemp
+    });
+  };
+  //////////////////
+
   render() {
     // show weather is loading (loading circle)
     if (this.state.loadingCurrentWeather || this.state.loadingForecast) {
@@ -161,7 +182,11 @@ export default class Details extends React.Component {
         <ScrollView>
           <SafeAreaView>
             <WeatherIcon icon={weather[0].icon} />
-            <H1>{`${Math.round(main.temp)}°`}</H1>
+
+            <TouchableOpacity style={styles.temp} onPress={this.convert}>
+              <H1>{`${Math.round(this.state.newTemp)}°`}</H1>
+            </TouchableOpacity>
+
             <BasicRow>
               <H2>{`Humidity: ${main.humidity}%`}</H2>
             </BasicRow>

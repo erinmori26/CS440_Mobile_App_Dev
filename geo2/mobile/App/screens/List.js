@@ -13,7 +13,6 @@ class ListScreen extends React.Component {
   componentDidMount() {
     geoFetch("/geocache/list")
       .then(response => {
-        console.log("MOUNTED");
         this.setState({
           loading: false,
           list: response.result // display cache items
@@ -26,11 +25,9 @@ class ListScreen extends React.Component {
 
   render() {
     if (this.state.loading) {
-      console.log("LOADING");
       return <ActivityIndicator size="large" />;
     }
 
-    console.log("RETURNING");
     return (
       <List
         data={this.state.list}

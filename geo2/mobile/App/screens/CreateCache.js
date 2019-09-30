@@ -27,7 +27,7 @@ class CreateCache extends React.Component {
   };
 
   onSavePress = () => {
-    const { title, description, latitude, longitude } = this.state; // object destructuring
+    const { title, description, latitude, longitude } = this.state;
     this.setState({ loading: true }, () => {
       // only press once
       geoFetch(`/geocache`, {
@@ -35,7 +35,7 @@ class CreateCache extends React.Component {
         headers: {
           "Content-Type": "application/json" // json data
         },
-        body: JSON.stringify({ title, description, latitude, longitude }) // turn all into string
+        body: JSON.stringify({ title, description, latitude, longitude })
       })
         .then(() => {
           // goes back to cache index screen

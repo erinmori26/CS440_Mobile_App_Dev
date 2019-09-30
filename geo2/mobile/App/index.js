@@ -5,8 +5,9 @@ import { createStackNavigator } from "react-navigation-stack";
 
 import List from "./screens/List";
 import Details from "./screens/Details";
+import CreateCache from "./screens/CreateCache";
 
-import { AddButton } from "./components/Navigation";
+import { AddButton, CloseButton } from "./components/Navigation";
 
 const defaultStackOptions = {
   headerStyle: {

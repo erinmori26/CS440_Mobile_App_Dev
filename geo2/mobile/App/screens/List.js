@@ -11,6 +11,7 @@ class ListScreen extends React.Component {
   };
 
   componentDidMount() {
+    console.log("MOUNTED");
     geoFetch("/geocache/list")
       .then(response => {
         this.setState({
@@ -25,6 +26,7 @@ class ListScreen extends React.Component {
 
   render() {
     if (this.state.loading) {
+      console.log("LOADING");
       return <ActivityIndicator size="large" />;
     }
 

@@ -1,7 +1,7 @@
 //const BASE_URL = "http://localhost:3000"; // computer
 //const BASE_URL = "http://172.17.58.118:3000"; // Wifi
 //const BASE_URL = "http://173.51.196.50:3000"; // iPhone
-const BASE_URL = "http://172.17.57.236:3000";
+const BASE_URL = "http://172.17.57.236:3000"; // computer, where you find server
 
 export const geoFetch = (path, options = {}) => {
   return fetch(`${BASE_URL}/api${path}`, options)

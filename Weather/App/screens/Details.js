@@ -70,6 +70,7 @@ export default class Details extends React.Component {
     forecast: [],
     loadingForecast: true, // flag for loading container
     newTemp: 0, // PLACEHOLDER FOR NEW TEMP
+    backgroundColor: "#3145b7",
     degreeMetric: "F" // start with Fahrenheit
   };
 
@@ -113,6 +114,41 @@ export default class Details extends React.Component {
     ]);
   };
 
+  // change color of screen based on weather
+  weatherColor = () => {
+    console.log("Weather State: " + this.state.weatherState);
+    if (this.state.weatherState === "Clear") {
+      this.setState({
+        backgroundColor: "#8f9600"
+      });
+    } else if (this.state.weatherState === "Sun") {
+      this.setState({
+        backgroundColor: "#8f9600"
+      });
+    } else if (this.state.weatherState === "Clouds") {
+      this.setState({
+        backgroundColor: "#d8d8d8"
+      });
+    } else if (this.state.weatherState === "Rain") {
+      this.setState({
+        backgroundColor: "#8080ff"
+      });
+    } else if (this.state.weatherState === "Snow") {
+      this.setState({
+        backgroundColor: "#fff"
+      });
+    } else if (this.state.weatherState === "Fog") {
+      this.setState({
+        backgroundColor: "#fff"
+      });
+    } else {
+      console.log("The default function is working.");
+      this.setState({
+        backgroundColor: "#3145b7"
+      });
+    }
+  };
+
   // use weather API
   getCurrentWeather = ({ zipcode, coords }) =>
     weatherApi("/weather", { zipcode, coords })
@@ -126,8 +162,12 @@ export default class Details extends React.Component {
             currentWeather: response,
             loadingCurrentWeather: false,
             newTemp: response.main.temp,
-            degreeMetric: "F" // start with Fahrenheit
+            degreeMetric: "F", // start with Fahrenheit
+            weatherState: response.weather[0].main, // access weather type
+            backgroundColor: "#000000"
           });
+          // screen color change function
+          this.weatherColor();
           // add search to search history
           addRecentSearch({
             id: response.id,
@@ -197,7 +237,7 @@ export default class Details extends React.Component {
     const { weather, main } = this.state.currentWeather;
 
     return (
-      <Container>
+      <Container style={{ backgroundColor: this.state.backgroundColor }}>
         <ScrollView>
           <SafeAreaView>
             <WeatherIcon icon={weather[0].icon} />

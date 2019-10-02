@@ -20,7 +20,8 @@ import { addRecentSearch } from "../util/recentSearch";
 
 const styles = StyleSheet.create({
   temp: {
-    tintColor: "#fff"
+    tintColor: "#fff",
+    marginTop: 20
   }
 });
 
@@ -66,7 +67,8 @@ export default class Details extends React.Component {
     loadingCurrentWeather: true, // flag for loading container
     forecast: [],
     loadingForecast: true, // flag for loading container
-    newTemp: 0 // PLACEHOLDER FOR NEW TEMP
+    newTemp: 0, // PLACEHOLDER FOR NEW TEMP
+    degreeMetric: "F" // start with Fahrenheit
   };
 
   componentDidMount() {
@@ -121,7 +123,9 @@ export default class Details extends React.Component {
           this.setState({
             currentWeather: response,
             loadingCurrentWeather: false,
-            newTemp: response.main.temp
+            //newTemp: convert(response)
+            newTemp: response.main.temp,
+            degreeMetric: "F" // start with Fahrenheit
           });
           // add search to search history
           addRecentSearch({
@@ -156,11 +160,25 @@ export default class Details extends React.Component {
 
   //////////////////
   convert = () => {
-    curTemp = this.state.currentWeather.main.temp;
-    CTemp = (curTemp - 32) * (5 / 9);
-    this.setState({
-      newTemp: CTemp
-    });
+    curTemp = this.state.newTemp;
+
+    if (this.state.degreeMetric == "F") {
+      CTemp = (curTemp - 32) * (5 / 9);
+      this.setState({
+        newTemp: CTemp,
+        degreeMetric: "C" // now degrees in Celsius
+      });
+    } else if (this.state.degreeMetric == "C") {
+      FTemp = curTemp * (9 / 5) + 32;
+      this.setState({
+        newTemp: FTemp,
+        degreeMetric: "F" // now degrees in Fahrenheit
+      });
+    } else {
+      this.setState({
+        newTemp: curTemp
+      });
+    }
   };
   //////////////////
 
@@ -183,9 +201,22 @@ export default class Details extends React.Component {
           <SafeAreaView>
             <WeatherIcon icon={weather[0].icon} />
 
-            <TouchableOpacity style={styles.temp} onPress={this.convert}>
-              <H1>{`${Math.round(this.state.newTemp)}°`}</H1>
+            {/*********************************** */}
+            <BasicRow>
+              <Text style={{ color: "#fff", marginTop: 20 }}>
+                Click the temperature to switch between C/F
+              </Text>
+            </BasicRow>
+            <TouchableOpacity
+              style={styles.temp}
+              onPress={() => this.convert()}
+            >
+              <H1>
+                {`${Math.round(this.state.newTemp)}°`}
+                {this.state.degreeMetric}
+              </H1>
             </TouchableOpacity>
+            {/*********************************** */}
 
             <BasicRow>
               <H2>{`Humidity: ${main.humidity}%`}</H2>
@@ -202,7 +233,7 @@ export default class Details extends React.Component {
                   key={day.day}
                   style={{ justifyContent: "space-between" }}
                 >
-                  <P>{format(new Date(day.day), "MMM d, yyyy")}</P>
+                  <P>{format(new Date(day.day), "MMMM dd, yyyy")}</P>
                   <View style={{ flexDirection: "row" }}>
                     <P style={{ fontWeight: "700", marginRight: 10 }}>
                       {Math.round(day.temp_max)}

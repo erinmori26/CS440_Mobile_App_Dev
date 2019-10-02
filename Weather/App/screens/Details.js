@@ -18,12 +18,14 @@ import { BasicRow } from "../components/List";
 import { H1, H2, P } from "../components/Text";
 import { addRecentSearch } from "../util/recentSearch";
 
+////////////////////
 const styles = StyleSheet.create({
   temp: {
     tintColor: "#fff",
     marginTop: 20
   }
 });
+/////////////////////
 
 const groupForecastByDay = list => {
   const data = {};
@@ -123,7 +125,6 @@ export default class Details extends React.Component {
           this.setState({
             currentWeather: response,
             loadingCurrentWeather: false,
-            //newTemp: convert(response)
             newTemp: response.main.temp,
             degreeMetric: "F" // start with Fahrenheit
           });
